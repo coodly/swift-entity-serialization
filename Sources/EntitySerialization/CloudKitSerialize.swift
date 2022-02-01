@@ -7,7 +7,7 @@ public class CloudKitSerialize {
         self.serialize = serlialize
     }
     
-    public func serialize(entities: [NSManagedObject], in zone: CKRecordZone) -> [CKRecord] {
+    public func serialize(entities: [NSManagedObject], in zone: CKRecordZone) throws -> [CKRecord] {
         var records = [CKRecord]()
         for entity in entities {
             let definition = entity.entity
@@ -33,8 +33,15 @@ public class CloudKitSerialize {
                 }
                 
                 if field.field.valueType == field.attribute.valueType, field.field.valueType == .reference {
-                    let entity = value as! NSManagedObject
-                    record.setValue(CKRecord.Reference(entity: entity, in: zone), forKey: field.field.name)
+                    guard let entity = value as? NSManagedObject else {
+                        throw SerializationError.referenceWrongType(field.attribute.name)
+                    }
+                    
+                    guard let reference =  CKRecord.Reference(entity: entity, in: zone) else {
+                        throw SerializationError.couldNotCreateReference(field.attribute.name)
+                    }
+
+                    record.setValue(reference, forKey: field.field.name)
                     continue
                 }
                 

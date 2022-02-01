@@ -13,7 +13,7 @@ final class SerializeMovieTests: XCTestCase {
     func testMovieEntityToRecord() throws {
         let movie = persistence.viewContext.createTestMovie()
         let serialize = CloudKitSerialize(serlialize: [.movie])
-        let records = serialize.serialize(entities: [movie], in: CKRecordZone.default())
+        let records = try serialize.serialize(entities: [movie], in: CKRecordZone.default())
         XCTAssertEqual(1, records.count)
         guard let record = records.first else {
             return

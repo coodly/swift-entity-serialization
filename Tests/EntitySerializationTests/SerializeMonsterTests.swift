@@ -11,14 +11,14 @@ final class SerializeMonsterTests: XCTestCase {
         persistence = Persistence()
     }
     
-    func testMonsterWithExpansionToRecord() {
+    func testMonsterWithExpansionToRecord() throws {
         let monster = persistence.viewContext.createMonster(named: "White Lion")
         monster.recordName = "monster-white-lion"
         monster.expansion = persistence.viewContext.createExpansion(named: "Slenderman")
         monster.expansion?.recordName = "expansion-slenderman"
         
         let serialize = CloudKitSerialize(serlialize: [.monster])
-        let records = serialize.serialize(entities: [monster], in: CKRecordZone.default())
+        let records = try serialize.serialize(entities: [monster], in: CKRecordZone.default())
         XCTAssertEqual(1, records.count)
         let checked = records[0]
         dump(checked)
