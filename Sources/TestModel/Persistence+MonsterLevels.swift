@@ -16,4 +16,9 @@ extension NSManagedObjectContext {
         let request = NSFetchRequest<NSManagedObject>(entityName: "MonsterLevel")
         return try fetch(request).first as? MonsterLevel
     }
+    
+    internal func numberOfLevels() throws -> Int {
+        let request: NSFetchRequest<NSNumber> = NSFetchRequest(entityName: "MonsterLevel")
+        return try count(for: request)
+    }
 }

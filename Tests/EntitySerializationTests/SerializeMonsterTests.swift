@@ -123,6 +123,47 @@ final class SerializeMonsterTests: XCTestCase {
         XCTAssertEqual(NSNumber(value: 8), checked.baseToughness)
         XCTAssertEqual(NSNumber(value: 9), checked.tokenMovement)
     }
+    
+    func testOnUpdateExistingLevelsRemoved() throws {
+        let monster = persistence.viewContext.createMonster(named: "Flower Knight")
+        monster.recordName = "monster-flower-knight"
+        monster.name = "Flower Knight"
+        persistence.viewContext.createTestLevel().monster = monster
+        persistence.viewContext.createTestLevel(modify: 1).monster = monster
+        persistence.save()
+        
+        let level = EntityDescription(
+            name: "MonsterLevel",
+            values: [
+                FieldValue(name: "level", number: NSNumber(value: 8)),
+                FieldValue(name: "positionMonster", number: NSNumber(value: 9)),
+                FieldValue(name: "positionSurvivors", number: NSNumber(value: 10)),
+                
+                FieldValue(name: "baseMovement", number: NSNumber(value: 11)),
+                FieldValue(name: "baseToughness", number: NSNumber(value: 12)),
+                
+                FieldValue(name: "tokenMovement", number: NSNumber(value: 13))
+            ]
+        )
+        let data = try EncodeEntity().encoder.encode([level])
+        
+        let record = CKRecord(recordType: "Monster", recordID: CKRecord.ID(recordName: "monster-flower-knight", zoneID: .default))
+        record["name"] = "Changed Flower Knight"
+        record["levels"] = CKAsset(fileURL: URL(fileURLWithPath: NSTemporaryDirectory()))
+        
+        let dummyExtract = AssetDataExtract(onDataForAsset: { _, _ in return data})
+        
+        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        
+        try write.write(record: record, assetExtract: dummyExtract)
+
+        persistence.save()
+        persistence.viewContext.refresh(monster, mergeChanges: true)
+        XCTAssertEqual("Changed Flower Knight", monster.name)
+        XCTAssertEqual(1, monster.levels?.count)
+        XCTAssertEqual(8, monster.levels?.first?.level.intValue)
+        XCTAssertEqual(1, try persistence.viewContext.numberOfLevels())
+    }
 }
 
 extension RecordSerialize {

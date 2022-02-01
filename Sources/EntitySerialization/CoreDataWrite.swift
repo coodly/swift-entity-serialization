@@ -96,6 +96,10 @@ extension NSManagedObject {
             guard let loaded = try decode.decode(data: data, into: context) else {
                 return
             }
+            
+            if let existing = self.value(forKey: field.field.name) as? Set<NSManagedObject> {
+                existing.forEach({ context.delete($0) })
+            }
             setValue(NSSet(array: loaded), forKey: field.field.name)
         default:
             throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
