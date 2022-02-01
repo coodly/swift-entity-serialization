@@ -15,12 +15,12 @@ public class CloudKitSerialize {
                 fatalError()
             }
             
-            guard let recordName = entity.value(forKey: "recordName") as? String else {
+            guard let recordName = entity.value(forKey: SystemField.recordName) as? String else {
                 fatalError()
             }
             
             let record: CKRecord
-            if let data = entity.value(forKey: "recordData") as? Data {
+            if let data = entity.value(forKey: SystemField.recordData) as? Data {
                 let decoder = try! NSKeyedUnarchiver(forReadingFrom: data)
                 record = CKRecord(coder: decoder)!
             } else {
@@ -40,7 +40,7 @@ public class CloudKitSerialize {
                 switch (field.field.valueType, field.attribute.valueType) {
                 case (.int64List, .string):
                     let string = value as! String
-                    let numbers = string.components(separatedBy: "#").compactMap(Int.init).map(NSNumber.init)
+                    let numbers = string.components(separatedBy: SystemValue.numberSeparator).compactMap(Int.init).map(NSNumber.init)
                     record.setValue(numbers, forKey: field.field.name)
                 default:
                     fatalError()

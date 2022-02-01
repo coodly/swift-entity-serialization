@@ -20,10 +20,15 @@ let package = Package(
             name: "EntitySerialization",
             dependencies: []
         ),
+        .target(
+            name: "TestModel",
+            resources: [.process("Resources")]
+        ),
         .testTarget(
             name: "EntitySerializationTests",
             dependencies: [
-                "EntitySerialization"
+                "EntitySerialization",
+                "TestModel"
             ]
         ),
     ]

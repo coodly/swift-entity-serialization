@@ -25,8 +25,8 @@ public class CoreDataWrite {
                 )
             }
             
-            saved.setValue(record.recordID.recordName, forKey: "recordName")
-            saved.setValue(record.archived, forKey: "recordData")
+            saved.setValue(record.recordID.recordName, forKey: SystemField.recordName)
+            saved.setValue(record.archived, forKey: SystemField.recordName)
             
             for field in serialization.fields {
                 guard let value = record.value(forKey: field.field.name) else {
@@ -50,7 +50,7 @@ extension NSManagedObject {
         switch (field.field.valueType, field.attribute.valueType) {
         case (.int64List, .string):
             let numbers = value as! [NSNumber]
-            let transformed = numbers.map(\.int64Value).map(String.init).joined(separator: "#")
+            let transformed = numbers.map(\.int64Value).map(String.init).joined(separator: SystemValue.numberSeparator)
             setValue(transformed, forKey: field.attribute.name)
         default:
             fatalError()
@@ -71,7 +71,7 @@ extension NSAttributeDescription {
 extension NSManagedObjectContext {
     fileprivate func entity(named: String, recordName: String) -> NSManagedObject? {
         let request = NSFetchRequest<NSManagedObject>(entityName: named)
-        request.predicate = NSPredicate(format: "recordName = %@", recordName)
+        request.predicate = NSPredicate(format: "%K = %@", SystemField.recordName, recordName)
         return try? fetch(request).first
     }
 }
