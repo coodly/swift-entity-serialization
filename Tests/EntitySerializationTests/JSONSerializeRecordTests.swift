@@ -9,7 +9,7 @@ final class JSONSerializeRecordTests: XCTestCase {
     override func setUpWithError() throws {
         persistence = Persistence()
     }
-
+    
     func testLevelToJSON() throws {
         let level = persistence.viewContext.createTestLevel()
         let encode = EncodeEntity()
@@ -22,7 +22,33 @@ final class JSONSerializeRecordTests: XCTestCase {
             return
         }
         
-        let expected =
+        
+        XCTAssertEqual(testJSON, json)
+    }
+    
+    func testJSONToLevel() throws {
+        guard let data = testJSON.data(using: .utf8) else {
+            XCTFail()
+            return
+        }
+        
+        let decode = DecodeEntity()
+        guard let entities = try decode.decode(data: data, into: persistence.viewContext) else {
+            return
+        }
+        XCTAssertEqual(1, entities.count)
+        guard let loaded = try persistence.viewContext.existingLevel() else {
+            return
+        }
+        XCTAssertEqual(NSNumber(value: 1), loaded.level)
+        XCTAssertEqual(NSNumber(value: 2), loaded.positionSurvivors)
+        XCTAssertEqual(NSNumber(value: 3), loaded.positionMonster)
+        XCTAssertEqual(NSNumber(value: 4), loaded.baseMovement)
+        XCTAssertEqual(NSNumber(value: 5), loaded.baseToughness)
+        XCTAssertEqual(NSNumber(value: 6), loaded.tokenMovement)
+    }
+    
+    private let testJSON =
         """
         {
           "name" : "MonsterLevel",
@@ -60,6 +86,4 @@ final class JSONSerializeRecordTests: XCTestCase {
           ]
         }
         """
-        XCTAssertEqual(expected, json)
-    }
 }

@@ -11,4 +11,10 @@ extension NSManagedObjectContext {
         level.tokenMovement = NSNumber(value: 6)
         return level
     }
+    
+    internal func existingLevel() throws -> MonsterLevel? {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "MonsterLevel")
+        return try fetch(request).first as? MonsterLevel
+    }
+
 }
