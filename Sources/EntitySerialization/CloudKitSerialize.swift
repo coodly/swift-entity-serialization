@@ -32,6 +32,12 @@ public class CloudKitSerialize {
                     continue
                 }
                 
+                if field.field.valueType == field.attribute.valueType, field.field.valueType == .reference {
+                    let entity = value as! NSManagedObject
+                    record.setValue(CKRecord.Reference(entity: entity, in: zone), forKey: field.field.name)
+                    continue
+                }
+                
                 if field.field.valueType == field.attribute.valueType {
                     record.setValue(value, forKey: field.field.name)
                     continue
@@ -42,6 +48,8 @@ public class CloudKitSerialize {
                     let string = value as! String
                     let numbers = string.components(separatedBy: SystemValue.numberSeparator).compactMap(Int.init).map(NSNumber.init)
                     record.setValue(numbers, forKey: field.field.name)
+                case (.jsonData, .entitiesList) where (value as? NSSet)?.count == 0:
+                    break
                 default:
                     fatalError()
                 }
@@ -51,5 +59,15 @@ public class CloudKitSerialize {
         }
         
         return records
+    }
+}
+
+extension CKRecord.Reference {
+    fileprivate convenience init?(entity: NSManagedObject, in zone: CKRecordZone) {
+        guard let recordName = entity.value(forKey: SystemField.recordName) as? String else {
+            return nil
+        }
+        
+        self.init(recordID: CKRecord.ID(recordName: recordName, zoneID: zone.zoneID), action: .none)
     }
 }

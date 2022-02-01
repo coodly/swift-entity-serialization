@@ -9,4 +9,6 @@ internal class MonsterLevel: NSManagedObject {
     @NSManaged var baseToughness: NSNumber
     
     @NSManaged var tokenMovement: NSNumber
+    
+    @NSManaged var monster: Monster?
 }

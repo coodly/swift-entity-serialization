@@ -1,14 +1,14 @@
 import CoreData
 
 extension NSManagedObjectContext {
-    internal func createTestLevel() -> MonsterLevel {
+    internal func createTestLevel(modify: Int = 0) -> MonsterLevel {
         let level: MonsterLevel = NSEntityDescription.insertNewObject(forEntityName: "MonsterLevel", into: self) as! MonsterLevel
-        level.level = NSNumber(value: 1)
-        level.positionSurvivors = NSNumber(value: 2)
-        level.positionMonster = NSNumber(value: 3)
-        level.baseMovement = NSNumber(value: 4)
-        level.baseToughness = NSNumber(value: 5)
-        level.tokenMovement = NSNumber(value: 6)
+        level.level = NSNumber(value: 1 + modify)
+        level.positionSurvivors = NSNumber(value: 2 + modify)
+        level.positionMonster = NSNumber(value: 3 + modify)
+        level.baseMovement = NSNumber(value: 4 + modify)
+        level.baseToughness = NSNumber(value: 5 + modify)
+        level.tokenMovement = NSNumber(value: 6 + modify)
         return level
     }
     

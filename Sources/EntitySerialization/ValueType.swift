@@ -12,6 +12,8 @@ public enum ValueType: String, Codable {
     case assetId
     case unknownList
     
-    case jsonData
+    case asset
     case entitiesList
+    case entity
+    case jsonData
 }
