@@ -1,4 +1,4 @@
-public enum ValueType: String {
+public enum ValueType: String, Codable {
     case double
     case doubleList
     case int64
