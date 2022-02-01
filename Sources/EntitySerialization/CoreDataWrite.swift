@@ -26,7 +26,7 @@ public class CoreDataWrite {
             }
             
             saved.setValue(record.recordID.recordName, forKey: SystemField.recordName)
-            saved.setValue(record.archived, forKey: SystemField.recordName)
+            saved.setValue(record.archived, forKey: SystemField.recordData)
             
             for field in serialization.fields {
                 guard let value = record.value(forKey: field.field.name) else {

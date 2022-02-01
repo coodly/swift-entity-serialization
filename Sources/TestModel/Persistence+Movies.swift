@@ -12,4 +12,9 @@ extension NSManagedObjectContext {
         movie.year = NSNumber(value: 2022)
         return movie
     }
+    
+    internal func existingMovie() throws -> Movie? {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Movie")
+        return try fetch(request).first as? Movie
+    }
 }
