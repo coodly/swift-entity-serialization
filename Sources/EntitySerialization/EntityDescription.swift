@@ -1,4 +1,5 @@
 import Foundation
+
 internal struct EntityDescription: Codable {
     let name: String
     let values: [FieldValue]

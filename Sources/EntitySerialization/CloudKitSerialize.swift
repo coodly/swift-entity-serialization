@@ -57,6 +57,18 @@ public class CloudKitSerialize {
                     record.setValue(numbers, forKey: field.field.name)
                 case (.jsonData, .entitiesList) where (value as? NSSet)?.count == 0:
                     break
+                case (.jsonData, .entitiesList):
+                    guard let entities = value as? Set<NSManagedObject> else {
+                        throw SerializationError.entitiesListNotList(field.attribute.name)
+                    }
+                    
+                    let encode = EncodeEntity()
+                    guard let data = try encode.encodeEntities(Array(entities)) else {
+                        continue
+                    }
+                    
+                    let assetURL = try createTempFile(with: data)
+                    record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
                 default:
                     fatalError()
                 }
@@ -66,6 +78,15 @@ public class CloudKitSerialize {
         }
         
         return records
+    }
+    
+    private func createTempFile(with data: Data) throws -> URL {
+        let tmpDir = URL(fileURLWithPath: NSTemporaryDirectory())
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        
+        let file = tmpDir.appendingPathComponent(ProcessInfo().globallyUniqueString)
+        try data.write(to: file, options: .atomic)
+        return file
     }
 }
 
