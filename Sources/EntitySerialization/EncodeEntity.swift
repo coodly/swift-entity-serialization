@@ -2,7 +2,7 @@ import CoreData
 import Foundation
 
 public class EncodeEntity {
-    private lazy var encoder: JSONEncoder = {
+    private(set) internal lazy var encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

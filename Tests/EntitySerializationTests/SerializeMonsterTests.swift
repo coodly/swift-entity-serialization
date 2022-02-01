@@ -40,10 +40,8 @@ final class SerializeMonsterTests: XCTestCase {
         
         let serialize = CloudKitSerialize(serlialize: [.monster])
         let records = try serialize.serialize(entities: [monster], in: CKRecordZone.default())
-        guard let asset = records[0]["levels"] as? CKAsset else {
-            XCTFail()
-            return
-        }
+        
+        let asset = try XCTUnwrap(records[0]["levels"] as? CKAsset)
         
         let assetURL = asset.fileURL
         XCTAssertNotNil(assetURL)
@@ -68,6 +66,62 @@ final class SerializeMonsterTests: XCTestCase {
         XCTAssertNotNil(loaded)
         XCTAssertEqual("Screaming Antelope", loaded?.name)
         XCTAssertNotNil(loaded?.expansion, "Expansion not marked")
+    }
+    
+    func testWriteMonsterWithLevels() throws {
+        let levels: [EntityDescription] = [
+            EntityDescription(
+                name: "MonsterLevel",
+                values: [
+                    FieldValue(name: "level", number: NSNumber(value: 8)),
+                    FieldValue(name: "positionMonster", number: NSNumber(value: 9)),
+                    FieldValue(name: "positionSurvivors", number: NSNumber(value: 10)),
+                    
+                    FieldValue(name: "baseMovement", number: NSNumber(value: 11)),
+                    FieldValue(name: "baseToughness", number: NSNumber(value: 12)),
+                    
+                    FieldValue(name: "tokenMovement", number: NSNumber(value: 13))
+                ]
+            ),
+            EntityDescription(
+                name: "MonsterLevel",
+                values: [
+                    FieldValue(name: "level", number: NSNumber(value: 4)),
+                    FieldValue(name: "positionMonster", number: NSNumber(value: 5)),
+                    FieldValue(name: "positionSurvivors", number: NSNumber(value: 6)),
+                    
+                    FieldValue(name: "baseMovement", number: NSNumber(value: 7)),
+                    FieldValue(name: "baseToughness", number: NSNumber(value: 8)),
+                    
+                    FieldValue(name: "tokenMovement", number: NSNumber(value: 9))
+                ]
+            )
+        ]
+        
+        let data = try EncodeEntity().encoder.encode(levels)
+        let monster = CKRecord(recordType: "Monster", recordID: CKRecord.ID(recordName: "monster-gorm", zoneID: .default))
+        monster["name"] = "Gorm"
+        monster["levels"] = CKAsset(fileURL: URL(fileURLWithPath: NSTemporaryDirectory()))
+        
+        let dummyExtract = AssetDataExtract(onDataForAsset: { _, _ in return data})
+        
+        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        
+        try write.write(record: monster, assetExtract: dummyExtract)
+        
+        let loaded = try persistence.viewContext.existingMonster()
+        persistence.save()
+        XCTAssertNotNil(loaded)
+        XCTAssertNotNil(loaded?.levels)
+        XCTAssertEqual(2, loaded?.levels?.count)
+        
+        let checked = try XCTUnwrap(loaded?.levels?.first(where: { $0.level == NSNumber(value: 4) }))
+        XCTAssertEqual(NSNumber(value: 4), checked.level)
+        XCTAssertEqual(NSNumber(value: 5), checked.positionMonster)
+        XCTAssertEqual(NSNumber(value: 6), checked.positionSurvivors)
+        XCTAssertEqual(NSNumber(value: 7), checked.baseMovement)
+        XCTAssertEqual(NSNumber(value: 8), checked.baseToughness)
+        XCTAssertEqual(NSNumber(value: 9), checked.tokenMovement)
     }
 }
 

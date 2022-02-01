@@ -14,4 +14,8 @@ internal struct Persistence {
         container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         container.loadPersistentStores(completionHandler: {_, _ in })
     }
+    
+    public func save() {
+        try! viewContext.save()
+    }
 }

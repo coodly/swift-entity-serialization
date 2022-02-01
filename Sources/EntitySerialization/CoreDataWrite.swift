@@ -1,6 +1,32 @@
 import CloudKit
 import CoreData
 
+public struct AssetDataExtract {
+    private let onDataForAsset: ((CKAsset, String) throws -> Data?)
+    
+    public init(onDataForAsset: @escaping ((CKAsset, String) throws -> Data?)) {
+        self.onDataForAsset = onDataForAsset
+    }
+    
+    internal func data(for asset: CKAsset, named: String) throws -> Data? {
+        try onDataForAsset(asset, named)
+    }
+}
+
+extension AssetDataExtract {
+    public static let system = AssetDataExtract(
+        onDataForAsset: {
+            asset, _ in
+            
+            guard let url = asset.fileURL else {
+                return nil
+            }
+            
+            return try Data(contentsOf: url)
+        }
+    )
+}
+
 public class CoreDataWrite {
     private let context: NSManagedObjectContext
     private let serialize: [RecordSerialize]
@@ -9,7 +35,7 @@ public class CoreDataWrite {
         self.serialize = serlialize
     }
     
-    public func write(record: CKRecord) throws {
+    public func write(record: CKRecord, assetExtract: AssetDataExtract = .system) throws {
         guard let serialization = serialize.first(where: { $0.recordName.recordType == record.recordType }) else {
             fatalError()
         }
@@ -40,7 +66,7 @@ public class CoreDataWrite {
                 continue
             }
             
-            try saved.mark(value: value, on: field)
+            try saved.mark(value: value, on: field, assetExtract: assetExtract)
         }
         
         serialization.loaded(entity: saved, in: context)
@@ -48,7 +74,7 @@ public class CoreDataWrite {
 }
 
 extension NSManagedObject {
-    fileprivate func mark(value: Any, on field: RecordField) throws {
+    fileprivate func mark(value: Any, on field: RecordField, assetExtract: AssetDataExtract) throws {
         if field.field.valueType == field.attribute.valueType {
             setValue(value, forKey: field.attribute.name)
             return
@@ -59,6 +85,18 @@ extension NSManagedObject {
             let numbers = value as! [NSNumber]
             let transformed = numbers.map(\.int64Value).map(String.init).joined(separator: SystemValue.numberSeparator)
             setValue(transformed, forKey: field.attribute.name)
+        case (.jsonData, .entitiesList):
+            guard let asset = value as? CKAsset else {
+                throw SerializationError.didNotGetAsset(field.attribute.name)
+            }
+            guard let data = try assetExtract.data(for: asset, named: field.attribute.name), let context = managedObjectContext else {
+                return
+            }
+            let decode = DecodeEntity()
+            guard let loaded = try decode.decode(data: data, into: context) else {
+                return
+            }
+            setValue(NSSet(array: loaded), forKey: field.field.name)
         default:
             throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
         }

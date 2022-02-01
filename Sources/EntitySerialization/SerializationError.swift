@@ -9,4 +9,6 @@ public enum SerializationError: Error {
     case couldNotGetReference(String)
     case noReferenceRelationship(String)
     case noDestinationEntity(String?, String)
+    
+    case didNotGetAsset(String)
 }
