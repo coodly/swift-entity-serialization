@@ -22,25 +22,23 @@ public class DecodeEntity {
         }
         
         var loaded = [NSManagedObject]()
-        context.performAndWait {
-            for value in values {
-                let saved = NSEntityDescription.insertNewObject(
-                    forEntityName: value.name,
-                    into: context
-                )
-                
-                for field in value.values {
-                    switch field.type {
-                    case .int64:
-                        let number = NSNumber(value: field.int64!)
-                        saved.setValue(number, forKey: field.name)
-                    default:
-                        fatalError()
-                    }
+        for value in values {
+            let saved = NSEntityDescription.insertNewObject(
+                forEntityName: value.name,
+                into: context
+            )
+            
+            for field in value.values {
+                switch field.type {
+                case .int64:
+                    let number = NSNumber(value: field.int64!)
+                    saved.setValue(number, forKey: field.name)
+                default:
+                    throw SerializationError.unhandledTransformation(field.type)
                 }
-                
-                loaded.append(saved)
             }
+            
+            loaded.append(saved)
         }
         return loaded
     }

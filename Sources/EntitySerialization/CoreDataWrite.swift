@@ -9,39 +9,37 @@ public class CoreDataWrite {
         self.serialize = serlialize
     }
     
-    public func write(record: CKRecord) {
-        context.performAndWait {
-            guard let serialization = serialize.first(where: { $0.recordName.recordType == record.recordType }) else {
-                fatalError()
-            }
-            
-            let saved: NSManagedObject
-            if let existing = context.entity(named: serialization.recordName.entityName, recordName: record.recordID.recordName) {
-                saved = existing
-            } else {
-                saved = NSEntityDescription.insertNewObject(
-                    forEntityName: serialization.recordName.entityName,
-                    into: context
-                )
-            }
-            
-            saved.setValue(record.recordID.recordName, forKey: SystemField.recordName)
-            saved.setValue(record.archived, forKey: SystemField.recordData)
-            
-            for field in serialization.fields {
-                guard let value = record.value(forKey: field.field.name) else {
-                    continue
-                }
-                saved.mark(value: value, on: field)
-            }
-            
-            serialization.loaded(entity: saved, in: context)
+    public func write(record: CKRecord) throws {
+        guard let serialization = serialize.first(where: { $0.recordName.recordType == record.recordType }) else {
+            fatalError()
         }
+        
+        let saved: NSManagedObject
+        if let existing = context.entity(named: serialization.recordName.entityName, recordName: record.recordID.recordName) {
+            saved = existing
+        } else {
+            saved = NSEntityDescription.insertNewObject(
+                forEntityName: serialization.recordName.entityName,
+                into: context
+            )
+        }
+        
+        saved.setValue(record.recordID.recordName, forKey: SystemField.recordName)
+        saved.setValue(record.archived, forKey: SystemField.recordData)
+        
+        for field in serialization.fields {
+            guard let value = record.value(forKey: field.field.name) else {
+                continue
+            }
+            try saved.mark(value: value, on: field)
+        }
+        
+        serialization.loaded(entity: saved, in: context)
     }
 }
 
 extension NSManagedObject {
-    fileprivate func mark(value: Any, on field: RecordField) {
+    fileprivate func mark(value: Any, on field: RecordField) throws {
         if field.field.valueType == field.attribute.valueType {
             setValue(value, forKey: field.attribute.name)
             return
@@ -53,7 +51,7 @@ extension NSManagedObject {
             let transformed = numbers.map(\.int64Value).map(String.init).joined(separator: SystemValue.numberSeparator)
             setValue(transformed, forKey: field.attribute.name)
         default:
-            fatalError()
+            throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
         }
     }
 }

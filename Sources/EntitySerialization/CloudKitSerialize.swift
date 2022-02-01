@@ -70,7 +70,7 @@ public class CloudKitSerialize {
                     let assetURL = try createTempFile(with: data)
                     record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
                 default:
-                    fatalError()
+                    throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
                 }
             }
             
