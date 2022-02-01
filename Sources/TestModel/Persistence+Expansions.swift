@@ -2,9 +2,10 @@ import CoreData
 
 extension NSManagedObjectContext {
     internal func createExpansion(named: String) -> Expansion {
-        let monster: Expansion = NSEntityDescription.insertNewObject(forEntityName: "Expansion", into: self) as! Expansion
-        monster.name = named
+        let expansion: Expansion = NSEntityDescription.insertNewObject(forEntityName: "Expansion", into: self) as! Expansion
+        expansion.name = named
+        expansion.recordName = "expansion-\(named.lowercased())"
         
-        return monster
+        return expansion
     }
 }

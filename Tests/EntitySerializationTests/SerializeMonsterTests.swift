@@ -54,6 +54,21 @@ final class SerializeMonsterTests: XCTestCase {
         XCTAssertEqual("MonsterLevel", loaded[0].name)
         XCTAssertEqual(6, loaded[0].values.count)
     }
+    
+    func testWriteMonsterWithExpansion() throws {
+        let expansion = persistence.viewContext.createExpansion(named: "Gorm")
+        
+        let monster = CKRecord(recordType: "Monster", recordID: CKRecord.ID(recordName: "monster-screaming-antelope", zoneID: .default))
+        monster["name"] = "Screaming Antelope"
+        monster["expansion"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: expansion.recordName!, zoneID: .default), action: .none)
+        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        try write.write(record: monster)
+        
+        let loaded = try persistence.viewContext.existingMonster()
+        XCTAssertNotNil(loaded)
+        XCTAssertEqual("Screaming Antelope", loaded?.name)
+        XCTAssertNotNil(loaded?.expansion, "Expansion not marked")
+    }
 }
 
 extension RecordSerialize {

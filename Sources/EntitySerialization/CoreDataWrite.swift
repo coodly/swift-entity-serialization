@@ -31,6 +31,15 @@ public class CoreDataWrite {
             guard let value = record.value(forKey: field.field.name) else {
                 continue
             }
+            
+            if field.field.valueType == field.attribute.valueType, field.field.valueType == .reference {
+                guard let reference = value as? CKRecord.Reference else {
+                    throw SerializationError.couldNotGetReference(field.field.name)
+                }
+                try saved.mark(reference: reference, on: field)
+                continue
+            }
+            
             try saved.mark(value: value, on: field)
         }
         
@@ -53,6 +62,18 @@ extension NSManagedObject {
         default:
             throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
         }
+    }
+    
+    fileprivate func mark(reference: CKRecord.Reference, on field: RecordField) throws {
+        guard let relatsionship = entity.relationshipsByName[field.attribute.name], let destination = relatsionship.destinationEntity else {
+            throw SerializationError.noReferenceRelationship(field.attribute.name)
+        }
+        
+        guard let referenced = managedObjectContext?.entity(named: destination.name ?? "-", recordName: reference.recordID.recordName) else {
+            throw SerializationError.noDestinationEntity(destination.name, reference.recordID.recordName)
+        }
+        
+        setValue(referenced, forKey: field.field.name)
     }
 }
 

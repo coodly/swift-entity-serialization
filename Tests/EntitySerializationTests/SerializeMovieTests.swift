@@ -39,7 +39,7 @@ final class SerializeMovieTests: XCTestCase {
         record["year"] = NSNumber(value: 1999)
         
         let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.movie])
-        write.write(record: record)
+        try write.write(record: record)
         
         let written = try persistence.viewContext.existingMovie()
         XCTAssertNotNil(written)

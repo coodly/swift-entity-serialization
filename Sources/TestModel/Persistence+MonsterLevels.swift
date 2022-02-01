@@ -16,5 +16,4 @@ extension NSManagedObjectContext {
         let request = NSFetchRequest<NSManagedObject>(entityName: "MonsterLevel")
         return try fetch(request).first as? MonsterLevel
     }
-
 }
