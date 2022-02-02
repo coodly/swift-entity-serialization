@@ -89,7 +89,7 @@ extension NSManagedObject {
             guard let asset = value as? CKAsset else {
                 throw SerializationError.didNotGetAsset(field.attribute.name)
             }
-            guard let data = try assetExtract.data(for: asset, named: field.attribute.name), let context = managedObjectContext else {
+            guard let data = try assetExtract.data(for: asset, named: field.field.name), let context = managedObjectContext else {
                 return
             }
             let decode = DecodeEntity()
@@ -97,10 +97,10 @@ extension NSManagedObject {
                 return
             }
             
-            if let existing = self.value(forKey: field.field.name) as? Set<NSManagedObject> {
+            if let existing = self.value(forKey: field.attribute.name) as? Set<NSManagedObject> {
                 existing.forEach({ context.delete($0) })
             }
-            setValue(NSSet(array: loaded), forKey: field.field.name)
+            setValue(NSSet(array: loaded), forKey: field.attribute.name)
         default:
             throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
         }
@@ -115,7 +115,7 @@ extension NSManagedObject {
             throw SerializationError.noDestinationEntity(destination.name, reference.recordID.recordName)
         }
         
-        setValue(referenced, forKey: field.field.name)
+        setValue(referenced, forKey: field.attribute.name)
     }
 }
 

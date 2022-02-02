@@ -1,6 +1,6 @@
 public struct RecordField {
-    public let attribute: FieldDefinition
-    public let field: FieldDefinition
+    public let attribute: FieldDefinition // Core Data attribute
+    public let field: FieldDefinition // CKRecord field
 
     public init(attribute: FieldDefinition, field: FieldDefinition) {
         self.attribute = attribute

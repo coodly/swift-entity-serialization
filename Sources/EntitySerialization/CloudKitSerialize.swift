@@ -50,14 +50,14 @@ public class CloudKitSerialize {
                     continue
                 }
                 
-                switch (field.field.valueType, field.attribute.valueType) {
-                case (.int64List, .string):
+                switch (field.attribute.valueType, field.field.valueType) {
+                case (.string, .int64List):
                     let string = value as! String
                     let numbers = string.components(separatedBy: SystemValue.numberSeparator).compactMap(Int.init).map(NSNumber.init)
                     record.setValue(numbers, forKey: field.field.name)
-                case (.jsonData, .entitiesList) where (value as? NSSet)?.count == 0:
+                case (.entitiesList, .jsonData) where (value as? NSSet)?.count == 0:
                     break
-                case (.jsonData, .entitiesList):
+                case (.entitiesList, .jsonData):
                     guard let entities = value as? Set<NSManagedObject> else {
                         throw SerializationError.entitiesListNotList(field.attribute.name)
                     }
@@ -70,7 +70,7 @@ public class CloudKitSerialize {
                     let assetURL = try createTempFile(with: data)
                     record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
                 default:
-                    throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
+                    throw SerializationError.unhandledTransformation(field.attribute.valueType, field.field.valueType)
                 }
             }
             
