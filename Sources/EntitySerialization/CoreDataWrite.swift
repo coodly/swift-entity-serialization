@@ -37,7 +37,7 @@ public class CoreDataWrite {
     
     public func write(record: CKRecord, assetExtract: AssetDataExtract = .system) throws {
         guard let serialization = serialize.first(where: { $0.recordName.recordType == record.recordType }) else {
-            fatalError()
+            throw SerializationError.unmappedRecordType(record.recordType)
         }
         
         let saved: NSManagedObject

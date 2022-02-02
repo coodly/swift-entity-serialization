@@ -1,4 +1,4 @@
-public enum SerializationError: Error {
+public enum SerializationError: Error, Equatable {
     case referenceWrongType(String)
     case couldNotCreateReference(String)
     case entitiesListNotList(String)
@@ -11,4 +11,6 @@ public enum SerializationError: Error {
     case noDestinationEntity(String?, String)
     
     case didNotGetAsset(String)
+    
+    case unmappedRecordType(String)
 }

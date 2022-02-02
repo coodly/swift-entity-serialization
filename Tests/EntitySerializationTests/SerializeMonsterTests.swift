@@ -164,6 +164,14 @@ final class SerializeMonsterTests: XCTestCase {
         XCTAssertEqual(8, monster.levels?.first?.level.intValue)
         XCTAssertEqual(1, try persistence.viewContext.numberOfLevels())
     }
+    
+    func testWriteUnmappedRecordType() {
+        let record = CKRecord(recordType: "Cake", recordID: CKRecord.ID(recordName: "fake-cake"))
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.monster])
+        XCTAssertThrowsError(try write.write(record: record)) {
+            XCTAssertEqual(SerializationError.unmappedRecordType("Cake"), $0 as? SerializationError)
+        }
+    }
 }
 
 extension RecordSerialize {
