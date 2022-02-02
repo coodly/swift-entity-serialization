@@ -59,7 +59,7 @@ final class SerializeMonsterTests: XCTestCase {
         let monster = CKRecord(recordType: "Monster", recordID: CKRecord.ID(recordName: "monster-screaming-antelope", zoneID: .default))
         monster["name"] = "Screaming Antelope"
         monster["expansion"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: expansion.recordName!, zoneID: .default), action: .none)
-        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.monster])
         try write.write(record: monster)
         
         let loaded = try persistence.viewContext.existingMonster()
@@ -105,7 +105,7 @@ final class SerializeMonsterTests: XCTestCase {
         
         let dummyExtract = AssetDataExtract(onDataForAsset: { _, _ in return data})
         
-        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.monster])
         
         try write.write(record: monster, assetExtract: dummyExtract)
         
@@ -153,7 +153,7 @@ final class SerializeMonsterTests: XCTestCase {
         
         let dummyExtract = AssetDataExtract(onDataForAsset: { _, _ in return data})
         
-        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.monster])
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.monster])
         
         try write.write(record: record, assetExtract: dummyExtract)
 

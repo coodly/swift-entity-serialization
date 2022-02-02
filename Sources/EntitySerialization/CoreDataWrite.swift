@@ -30,9 +30,9 @@ extension AssetDataExtract {
 public class CoreDataWrite {
     private let context: NSManagedObjectContext
     private let serialize: [RecordSerialize]
-    public init(context: NSManagedObjectContext, serlialize: [RecordSerialize]) {
+    public init(context: NSManagedObjectContext, serialize: [RecordSerialize]) {
         self.context = context
-        self.serialize = serlialize
+        self.serialize = serialize
     }
     
     public func write(record: CKRecord, assetExtract: AssetDataExtract = .system) throws {

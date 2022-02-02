@@ -38,7 +38,7 @@ final class SerializeMovieTests: XCTestCase {
         record["tmdbID"] = NSNumber(value: 4321)
         record["year"] = NSNumber(value: 1999)
         
-        let write = CoreDataWrite(context: persistence.viewContext, serlialize: [.movie])
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.movie])
         try write.write(record: record)
         
         let written = try persistence.viewContext.existingMovie()
