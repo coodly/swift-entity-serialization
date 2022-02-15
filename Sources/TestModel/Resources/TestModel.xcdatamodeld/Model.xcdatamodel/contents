@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20075" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20083" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Expansion" representedClassName="TestModel.Expansion" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="recordData" optional="YES" attributeType="Binary"/>
@@ -32,10 +32,20 @@
         <attribute name="tmdbID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="year" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
+    <entity name="PrimeVideo" representedClassName="TestModel.PrimeVideo" syncable="YES">
+        <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="recordData" optional="YES" attributeType="Binary"/>
+        <attribute name="recordName" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="tag" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="tmdbID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <elements>
-        <element name="Movie" positionX="-63" positionY="-18" width="128" height="149"/>
-        <element name="MonsterLevel" positionX="-54" positionY="54" width="128" height="134"/>
-        <element name="Monster" positionX="-36" positionY="81" width="128" height="104"/>
         <element name="Expansion" positionX="-18" positionY="90" width="128" height="89"/>
+        <element name="Monster" positionX="-36" positionY="81" width="128" height="104"/>
+        <element name="MonsterLevel" positionX="-54" positionY="54" width="128" height="134"/>
+        <element name="Movie" positionX="-63" positionY="-18" width="128" height="149"/>
+        <element name="PrimeVideo" positionX="-36" positionY="81" width="128" height="134"/>
     </elements>
 </model>

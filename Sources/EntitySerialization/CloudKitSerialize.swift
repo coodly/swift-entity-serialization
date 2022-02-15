@@ -28,6 +28,10 @@ public class CloudKitSerialize {
             }
             
             for field in transform.fields {
+                if field.attribute.valueType == field.field.valueType, field.attribute.valueType == .date, field.field.name == SystemField.modificationDate {
+                    continue
+                }
+                
                 guard let value = entity.value(forKey: field.attribute.name) else {
                     continue
                 }
