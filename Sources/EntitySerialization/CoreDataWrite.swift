@@ -54,6 +54,11 @@ public class CoreDataWrite {
         saved.setValue(record.archived, forKey: SystemField.recordData)
         
         for field in serialization.fields {
+            if field.field.name == SystemField.modificationDate {
+                saved.setValue(record.modificationDate, forKey: field.attribute.name)
+                continue
+            }
+            
             guard let value = record.value(forKey: field.field.name) else {
                 continue
             }
