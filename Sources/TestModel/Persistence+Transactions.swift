@@ -40,6 +40,14 @@ extension NSManagedObjectContext {
         transaction.recordName = "cake-bake-shaek"
         
         return transaction
-
+    }
+    
+    internal func createTestAccount() {
+        let account = NSEntityDescription.insertNewObject(
+            forEntityName: "CDAccount", into: self
+        ) as! CDAccount
+        
+        account.recordName = "account-123"
+        account.name = "The Big Money"
     }
 }

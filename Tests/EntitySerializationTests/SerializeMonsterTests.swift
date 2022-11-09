@@ -21,7 +21,6 @@ final class SerializeMonsterTests: XCTestCase {
         let records = try serialize.serialize(entities: [monster], in: CKRecordZone.default())
         XCTAssertEqual(1, records.count)
         let checked = records[0]
-        dump(checked)
         XCTAssertEqual("White Lion", checked["name"])
         XCTAssertEqual("Monster", checked.recordType)
         XCTAssertEqual("monster-white-lion", checked.recordID.recordName)

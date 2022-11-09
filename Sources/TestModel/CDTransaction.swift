@@ -8,4 +8,5 @@ internal class CDTransaction: NSManagedObject {
     @NSManaged var comment: String?
     
     @NSManaged var tags: Set<CDTag>?
+    @NSManaged var account: CDAccount
 }

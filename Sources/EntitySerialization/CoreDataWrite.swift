@@ -123,7 +123,7 @@ extension NSManagedObject {
             
             let fetch: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: destination.name ?? "-")
             fetch.predicate = NSPredicate(format: "%K IN %@", name, strings)
-            let existing: [NSManagedObject] = try context.fetch(fetch) ?? []
+            let existing: [NSManagedObject] = try context.fetch(fetch)
             
             var mark = [NSManagedObject]()
             for string in strings {

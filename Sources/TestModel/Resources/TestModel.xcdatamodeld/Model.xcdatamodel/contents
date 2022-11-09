@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="21G217" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CDAccount" representedClassName="TestModel.CDAccount" syncable="YES">
+        <attribute name="name" attributeType="String"/>
+        <attribute name="recordData" optional="YES" attributeType="Binary"/>
+        <attribute name="recordName" attributeType="String"/>
+        <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDTransaction" inverseName="account" inverseEntity="CDTransaction"/>
+    </entity>
     <entity name="CDTag" representedClassName="TestModel.CDTag" syncable="YES">
         <attribute name="tag" attributeType="String"/>
         <relationship name="transactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTransaction" inverseName="tags" inverseEntity="CDTransaction"/>
@@ -8,6 +14,7 @@
         <attribute name="comment" optional="YES" attributeType="String"/>
         <attribute name="recordData" optional="YES" attributeType="Binary"/>
         <attribute name="recordName" attributeType="String"/>
+        <relationship name="account" maxCount="1" deletionRule="Nullify" destinationEntity="CDAccount" inverseName="transactions" inverseEntity="CDAccount"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="transactions" inverseEntity="CDTag"/>
     </entity>
     <entity name="Expansion" representedClassName="TestModel.Expansion" syncable="YES">

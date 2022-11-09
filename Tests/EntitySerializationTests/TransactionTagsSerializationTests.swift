@@ -54,6 +54,7 @@ extension RecordSerialize {
             recordType: "Transaction"
         ),
         fields: [
+            RecordField("account", valueType: .reference),
             RecordField("comment", valueType: .string),
             RecordField(
                 attribute: FieldDefinition(
