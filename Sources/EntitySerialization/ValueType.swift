@@ -16,4 +16,5 @@ public enum ValueType: String, Codable {
     case entitiesList
     case entity
     case jsonData
+    case singleValueUniqueEntity
 }

@@ -106,6 +106,41 @@ extension NSManagedObject {
                 existing.forEach({ context.delete($0) })
             }
             setValue(NSSet(array: loaded), forKey: field.attribute.name)
+        case (.stringList, .singleValueUniqueEntity):
+            guard let strings = value as? [String], !strings.isEmpty else {
+                return
+            }
+            
+            guard let relationship = entity.relationshipsByName[field.attribute.name], let destination = relationship.destinationEntity else {
+                throw SerializationError.noReferenceRelationship(field.attribute.name)
+            }
+            
+            guard let (name, attibute) = destination.attributesByName.first, attibute.isString else {
+                throw SerializationError.uniqueValueEntity
+            }
+            
+            let context = managedObjectContext!
+            
+            let fetch: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: destination.name ?? "-")
+            fetch.predicate = NSPredicate(format: "%K IN %@", name, strings)
+            let existing: [NSManagedObject] = try context.fetch(fetch) ?? []
+            
+            var mark = [NSManagedObject]()
+            for string in strings {
+                if let found = existing.first(where: { ($0.value(forKey: name) as? String) == string }) {
+                    mark.append(found)
+                } else {
+                    let saved: NSManagedObject = NSEntityDescription.insertNewObject(
+                        forEntityName: destination.name!,
+                        into: context
+                    )
+                    
+                    saved.setValue(string, forKey: name)
+                    mark.append(saved)
+                }
+            }
+            
+            setValue(NSSet(array: mark), forKey: field.attribute.name)
         default:
             throw SerializationError.unhandledTransformation(field.field.valueType, field.attribute.valueType)
         }

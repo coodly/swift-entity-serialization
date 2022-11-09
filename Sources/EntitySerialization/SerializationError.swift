@@ -9,6 +9,7 @@ public enum SerializationError: Error, Equatable {
     case couldNotGetReference(String)
     case noReferenceRelationship(String)
     case noDestinationEntity(String?, String)
+    case uniqueValueEntity
     
     case didNotGetAsset(String)
     

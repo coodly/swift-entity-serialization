@@ -73,6 +73,20 @@ public class CloudKitSerialize {
                     
                     let assetURL = try createTempFile(with: data)
                     record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
+                case (.singleValueUniqueEntity, .stringList):
+                    guard let entities = value as? Set<NSManagedObject> else {
+                        throw SerializationError.entitiesListNotList(field.attribute.name)
+                    }
+                    
+                    guard let destination = entity.entity.relationshipsByName[field.attribute.name]?.destinationEntity,
+                          let property = destination.properties.first else {
+                        throw SerializationError.uniqueValueEntity
+                    }
+                    
+                    let strings = entities.map({ $0.value(forKey: property.name) as? String })
+                    precondition(strings.count == entities.count)
+                    
+                    record.setValue(strings, forKey: field.field.name)
                 default:
                     throw SerializationError.unhandledTransformation(field.attribute.valueType, field.field.valueType)
                 }
