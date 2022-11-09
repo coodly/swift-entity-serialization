@@ -19,4 +19,8 @@ public struct RecordSerialize {
     internal func loaded(entity: NSManagedObject, in context: NSManagedObjectContext) {
         afterLoad?(entity, context)
     }
+    
+    public func without(attribute: String) -> RecordSerialize {
+        RecordSerialize(recordName: recordName, fields: fields.filter({ $0.attribute.name != attribute }))
+    }
 }
