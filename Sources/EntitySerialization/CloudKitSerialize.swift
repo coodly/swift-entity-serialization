@@ -41,7 +41,7 @@ public class CloudKitSerialize {
                         throw SerializationError.referenceWrongType(field.attribute.name)
                     }
                     
-                    guard let reference =  CKRecord.Reference(entity: entity, in: zone) else {
+                    guard let reference =  CKRecord.Reference(entity: entity, in: field.field.zone ?? zone) else {
                         throw SerializationError.couldNotCreateReference(field.attribute.name)
                     }
 

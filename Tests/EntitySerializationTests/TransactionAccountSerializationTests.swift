@@ -25,6 +25,16 @@ final class TransactionAccountSerializationTests: XCTestCase {
         XCTAssertNotNil(loaded.account)
     }
     
+    func testAccountInCorrectZone() throws {
+        let transaction = try persistence.viewContext.createTestTransaction()
+        let serialize = CloudKitSerialize(serlialize: [.transaction])
+        let record = try XCTUnwrap(serialize.serialize(entities: [transaction], in: CKRecordZone(zoneName: "Transactions")).first)
+        
+        XCTAssertEqual("Transactions", record.recordID.zoneID.zoneName)
+        let account = try XCTUnwrap(record["account"] as? CKRecord.Reference)
+        XCTAssertEqual("Accounts", account.recordID.zoneID.zoneName)
+    }
+    
     private var transactionRecord: CKRecord {
         let monster = CKRecord(
             recordType: "Transaction",

@@ -54,7 +54,10 @@ extension RecordSerialize {
             recordType: "Transaction"
         ),
         fields: [
-            RecordField("account", valueType: .reference),
+            RecordField(
+                attribute: FieldDefinition(name: "account", valueType: .reference),
+                field: FieldDefinition(reference: "account", in: CKRecordZone(zoneName: "Accounts"))
+            ),
             RecordField("comment", valueType: .string),
             RecordField(
                 attribute: FieldDefinition(

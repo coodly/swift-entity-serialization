@@ -25,6 +25,7 @@ extension NSManagedObjectContext {
         let transaction: CDTransaction = NSEntityDescription.insertNewObject(
             forEntityName: "CDTransaction", into: self
         ) as! CDTransaction
+        transaction.account = createTestAccount()
         transaction.comment = "Test Transaction"
         let tags = ["cake", "bake", "shake", "take"]
         let entities = tags.map({
@@ -42,12 +43,15 @@ extension NSManagedObjectContext {
         return transaction
     }
     
-    internal func createTestAccount() {
+    @discardableResult
+    internal func createTestAccount() -> CDAccount {
         let account = NSEntityDescription.insertNewObject(
             forEntityName: "CDAccount", into: self
         ) as! CDAccount
         
         account.recordName = "account-123"
         account.name = "The Big Money"
+        
+        return account
     }
 }
