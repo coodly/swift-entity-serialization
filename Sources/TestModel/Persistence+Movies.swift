@@ -1,9 +1,9 @@
 import CoreData
 
 extension NSManagedObjectContext {
-    internal func createTestMovie() -> Movie {
+    internal func createTestMovie(recordName: String = "move-1234") -> Movie {
         let movie: Movie = NSEntityDescription.insertNewObject(forEntityName: "Movie", into: self) as! Movie
-        movie.recordName = "move-1234"
+        movie.recordName = recordName
         movie.name = "Test movie one"
         movie.genres = [1, 2, 3, 4]
         movie.rating = NSNumber(value: 7)

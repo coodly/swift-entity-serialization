@@ -21,4 +21,16 @@ final class RecordDeleteTests: XCTestCase {
         
         XCTAssertNil(try persistence.viewContext.existingTransaction())
     }
+    
+    func testRemoveWithSameRecordEntityName() throws {
+        let recordName = "movie-123-to-delete"
+        _ = persistence.viewContext.createTestMovie(recordName: recordName)
+        
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.movie])
+        let remove = RecordRemove(recordId: CKRecord.ID(recordName: recordName), recordType: "Movie")
+        XCTAssertNoThrow(try write.process(removes: [remove]))
+        
+        XCTAssertNil(try persistence.viewContext.existingMovie())
+
+    }
 }

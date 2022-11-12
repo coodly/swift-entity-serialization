@@ -56,7 +56,7 @@ final class SerializeMovieTests: XCTestCase {
 }
 
 extension RecordSerialize {
-    fileprivate static let movie = RecordSerialize(
+    internal static let movie = RecordSerialize(
         recordName: RecordName(name: "Movie"),
         fields: [
             RecordField(
