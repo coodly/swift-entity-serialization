@@ -17,7 +17,7 @@ final class RecordDeleteTests: XCTestCase {
         
         let write = CoreDataWrite(context: persistence.viewContext, serialize: [.transaction])
         let remove = RecordRemove(recordId: CKRecord.ID(recordName: recordName), recordType: "Transaction")
-        XCTAssertNoThrow(try write.process(removes: [remove]))
+        XCTAssertNoThrow(try write.remove(record: remove))
         
         XCTAssertNil(try persistence.viewContext.existingTransaction())
     }
@@ -28,9 +28,14 @@ final class RecordDeleteTests: XCTestCase {
         
         let write = CoreDataWrite(context: persistence.viewContext, serialize: [.movie])
         let remove = RecordRemove(recordId: CKRecord.ID(recordName: recordName), recordType: "Movie")
-        XCTAssertNoThrow(try write.process(removes: [remove]))
+        XCTAssertNoThrow(try write.remove(record: remove))
         
         XCTAssertNil(try persistence.viewContext.existingMovie())
-
+    }
+    
+    func testRemoveNonExisting() throws {
+        let write = CoreDataWrite(context: persistence.viewContext, serialize: [.movie])
+        let remove = RecordRemove(recordId: CKRecord.ID(recordName: "the-movie-cake"), recordType: "Movie")
+        XCTAssertFalse(try write.remove(record: remove))
     }
 }

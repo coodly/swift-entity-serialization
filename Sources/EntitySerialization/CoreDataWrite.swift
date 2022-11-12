@@ -77,18 +77,19 @@ public class CoreDataWrite {
         serialization.loaded(entity: saved, in: context)
     }
     
-    public func process(removes: [RecordRemove]) throws {
-        for remove in removes {
-            guard let serialization = serialize.first(where: { $0.recordName.recordType == remove.recordType }) else {
-                throw SerializationError.unmappedRecordType(remove.recordType)
-            }
-            
-            let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: serialization.recordName.entityName)
-            request.predicate = NSPredicate(format: "recordName = %@", remove.recordId.recordName)
-            if let removed = try? context.fetch(request).first {
-                context.delete(removed)
-            }
+    public func remove(record remove: RecordRemove) throws -> Bool {
+        guard let serialization = serialize.first(where: { $0.recordName.recordType == remove.recordType }) else {
+            throw SerializationError.unmappedRecordType(remove.recordType)
         }
+        
+        let request: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: serialization.recordName.entityName)
+        request.predicate = NSPredicate(format: "recordName = %@", remove.recordId.recordName)
+        if let removed = try? context.fetch(request).first {
+            context.delete(removed)
+            return true
+        }
+        
+        return false
     }
 }
 
