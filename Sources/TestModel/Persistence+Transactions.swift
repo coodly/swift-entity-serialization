@@ -21,7 +21,7 @@ extension NSManagedObjectContext {
         return try fetch(request).first as? CDTransaction
     }
     
-    internal func createTestTransaction() throws -> CDTransaction {
+    internal func createTestTransaction(recordName: String = "cake-bake-shake") throws -> CDTransaction {
         let transaction: CDTransaction = NSEntityDescription.insertNewObject(
             forEntityName: "CDTransaction", into: self
         ) as! CDTransaction
@@ -38,7 +38,7 @@ extension NSManagedObjectContext {
         })
         
         transaction.tags = Set(entities)
-        transaction.recordName = "cake-bake-shaek"
+        transaction.recordName = recordName
         
         return transaction
     }
