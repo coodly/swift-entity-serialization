@@ -95,12 +95,20 @@ public class CoreDataWrite {
 
 extension NSManagedObject {
     fileprivate func mark(value: Any, on field: RecordField, assetExtract: AssetDataExtract) throws {
-        if field.field.valueType == field.attribute.valueType {
+        if field.field.valueType == field.attribute.valueType, field.field.valueType != .jsonData {
             setValue(value, forKey: field.attribute.name)
             return
         }
         
         switch (field.field.valueType, field.attribute.valueType) {
+        case (.jsonData, .jsonData):
+            guard let asset = value as? CKAsset else {
+                throw SerializationError.didNotGetAsset(field.attribute.name)
+            }
+            guard let data = try assetExtract.data(for: asset, named: field.field.name) else {
+                return
+            }
+            setValue(data, forKey: field.attribute.name)
         case (.int64List, .string):
             let numbers = value as! [NSNumber]
             let transformed = numbers.map(\.int64Value).map(String.init).joined(separator: SystemValue.numberSeparator)

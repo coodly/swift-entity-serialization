@@ -48,13 +48,16 @@ public class CloudKitSerialize {
                     record.setValue(reference, forKey: field.field.name)
                     continue
                 }
-                
-                if field.field.valueType == field.attribute.valueType {
+
+                if field.field.valueType == field.attribute.valueType, field.field.valueType != .jsonData {
                     record.setValue(value, forKey: field.field.name)
                     continue
                 }
                 
                 switch (field.attribute.valueType, field.field.valueType) {
+                case (.jsonData, .jsonData):
+                    let assetURL = try createTempFile(with: value as! Data)
+                    record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
                 case (.string, .int64List):
                     let string = value as! String
                     let numbers = string.components(separatedBy: SystemValue.numberSeparator).compactMap(Int.init).map(NSNumber.init)
