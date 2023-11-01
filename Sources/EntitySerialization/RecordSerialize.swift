@@ -2,7 +2,7 @@ import CoreData
 
 public struct RecordSerialize {
     public let recordName: RecordName
-    internal let fields: [RecordField]
+    public let fields: [RecordField]
     internal var afterLoad: ((NSManagedObject, NSManagedObjectContext) -> Void)?
     
     public init(recordName: RecordName, fields: [RecordField]) {

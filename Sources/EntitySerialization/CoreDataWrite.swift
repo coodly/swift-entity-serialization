@@ -101,6 +101,21 @@ extension NSManagedObject {
         }
         
         switch (field.field.valueType, field.attribute.valueType) {
+        case (.referenceList, .entitiesList):
+            guard let references = value as? [CKRecord.Reference], !references.isEmpty else {
+                return
+            }
+            
+            guard let relationship = entity.relationshipsByName[field.attribute.name], let destination = relationship.destinationEntity else {
+                throw SerializationError.noReferenceRelationship(field.attribute.name)
+            }
+            
+            let fetch: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: destination.name ?? "-")
+            fetch.predicate = NSPredicate(format: "%K IN %@", "recordName", references.map(\.recordID.recordName))
+            let existing = self.value(forKey: field.attribute.name) as? Set<NSManagedObject> ?? []
+            let fetched: [NSManagedObject] = try managedObjectContext!.fetch(fetch)
+            let updated = existing.union(Set(fetched))
+            setValue(updated, forKey: field.attribute.name)
         case (.jsonData, .jsonData):
             guard let asset = value as? CKAsset else {
                 throw SerializationError.didNotGetAsset(field.attribute.name)

@@ -1,8 +1,8 @@
 import CloudKit
 
 public struct FieldDefinition {
-    internal let name: String
-    internal let valueType: ValueType
+    public let name: String
+    public let valueType: ValueType
     internal let zone: CKRecordZone?
 }
 

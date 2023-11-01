@@ -55,6 +55,13 @@ public class CloudKitSerialize {
                 }
                 
                 switch (field.attribute.valueType, field.field.valueType) {
+                case (.entitiesList, .referenceList):
+                    guard let entities = value as? Set<NSManagedObject> else {
+                        throw SerializationError.referenceWrongType(field.attribute.name)
+                    }
+                    
+                    let references = entities.compactMap({ CKRecord.Reference(entity: $0, in: field.field.zone ?? zone) })
+                    record.setValue(references, forKey: field.field.name)
                 case (.jsonData, .jsonData):
                     let assetURL = try createTempFile(with: value as! Data)
                     record.setValue(CKAsset(fileURL: assetURL), forKey: field.field.name)
