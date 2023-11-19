@@ -1,6 +1,6 @@
 import Foundation
 
-internal struct EntityDescription: Codable {
+public struct EntityDescription: Codable {
     let name: String
     let values: [FieldValue]
 }
