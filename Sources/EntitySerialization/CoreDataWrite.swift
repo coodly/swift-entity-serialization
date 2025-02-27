@@ -199,7 +199,7 @@ extension NSManagedObject {
 
 extension NSAttributeDescription {
   fileprivate var isString: Bool {
-    if #available(iOS 15, macOS 12, *) {
+    if #available(iOS 15, macOS 12, tvOS 15, *) {
       return type == .string
     } else {
       return attributeType == .stringAttributeType
