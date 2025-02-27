@@ -4,32 +4,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-entity-serialization",
-    platforms: [.iOS(.v13), .macOS(.v11)],
-    products: [
-        .library(
-            name: "EntitySerialization",
-            targets: ["EntitySerialization"]
-        ),
-    ],
-    dependencies: [
+  name: "swift-entity-serialization",
+  platforms: [.iOS(.v13), .macOS(.v11)],
+  products: [
+    .library(
+      name: "EntitySerialization",
+      targets: ["EntitySerialization"]
+    ),
+  ],
+  dependencies: [
 
-    ],
-    targets: [
-        .target(
-            name: "EntitySerialization",
-            dependencies: []
-        ),
-        .target(
-            name: "TestModel",
-            resources: [.process("Resources")]
-        ),
-        .testTarget(
-            name: "EntitySerializationTests",
-            dependencies: [
-                "EntitySerialization",
-                "TestModel"
-            ]
-        ),
-    ]
+  ],
+  targets: [
+    .target(
+      name: "EntitySerialization",
+      dependencies: []
+    ),
+    .target(
+      name: "TestModel",
+      resources: [.process("Resources")]
+    ),
+    .testTarget(
+      name: "EntitySerializationTests",
+      dependencies: [
+        "EntitySerialization",
+        "TestModel"
+      ]
+    ),
+  ]
 )
