@@ -1,4 +1,4 @@
-public struct RecordName {
+public struct RecordName: Sendable {
     public let entityName: String
     public let recordType: String
     

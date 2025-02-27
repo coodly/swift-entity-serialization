@@ -1,6 +1,6 @@
 import CoreData
 
-public struct RecordSerialize {
+public struct RecordSerialize: Sendable {
     public let recordName: RecordName
     public let fields: [RecordField]
     internal var afterLoad: ((NSManagedObject, NSManagedObjectContext) -> Void)?
